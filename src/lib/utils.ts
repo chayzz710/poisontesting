@@ -24,9 +24,10 @@ export function seededTilt(id: string, max = 8): number {
 }
 
 // Random offset in px range, seeded
-export function seededOffset(id: string, key: string, max: number): number {
-  const r = seededRandom(id + key)
-  return (r * 2 - 1) * max
+export function seededOffset(seed: string, min: number, max: number): number {
+  const hash = seed.split('').reduce((acc, c, i) => acc + c.charCodeAt(0) * (i + 1), 0)
+  const t = (hash % 1000) / 1000  // 0..1
+  return min + t * (max - min)
 }
 
 // Extract Spotify track ID from URL or bare ID

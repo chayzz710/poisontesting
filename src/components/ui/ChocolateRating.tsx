@@ -32,3 +32,5 @@ export default function ChocolateRating({ value, onChange, readonly = false }: C
 }
 
 export { BARS, LABELS }
+
+export { ChocolateRating }

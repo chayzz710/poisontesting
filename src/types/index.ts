@@ -30,9 +30,11 @@ export interface Photo {
   uploaded_by: string
   storage_path: string
   caption: string | null
-  taken_at: string | null
-  chocolate_rating: number | null
+  taken_at: string | null          // ISO date string
+  chocolate_rating: number | null  // 1–5
   created_at: string
+  url: string | null               // signed URL, populated after fetch (not in DB)
+  // Joined from profiles (optional, only when using select with join):
   profiles?: Pick<Profile, 'display_name' | 'nickname' | 'avatar_url'>
 }
 

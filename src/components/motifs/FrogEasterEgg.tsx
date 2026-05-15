@@ -15,7 +15,7 @@ const POSITIONS = [
 
 export default function FrogEasterEgg({ pageKey }: FrogEasterEggProps) {
   const [found, setFound] = useState(false)
-  const index = Math.floor(seededRandom(pageKey) * POSITIONS.length)
+  const index = Math.floor(seededRandom(pageKey ?? 'default') * POSITIONS.length)
   const pos = POSITIONS[index]
 
   return (
