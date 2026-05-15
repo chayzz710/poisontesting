@@ -1,9 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { useUser } from './lib/auth'
+import { useProfile } from './hooks/useProfile'
 import LoadingPun from './components/ui/LoadingPun'
 import GoogleLoginPrompt from './components/ui/GoogleLoginPrompt'
 import GatePage from './pages/GatePage'
+import SetupPage from './pages/SetupPage'
 import HomePage from './pages/HomePage'
 import GalleryPage from './pages/GalleryPage'
 import LettersPage from './pages/LettersPage'
@@ -17,12 +19,14 @@ import StyleguidePage from './pages/StyleguidePage'
 import './styles/globals.css'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useUser()
+  const { user, loading: userLoading } = useUser()
+  const { needsSetup, loading: profileLoading } = useProfile()
   const gatePassed = sessionStorage.getItem('gate') === 'ok'
 
   if (!gatePassed) return <Navigate to="/gate" replace />
-  if (loading) return <LoadingPun />
+  if (userLoading || profileLoading) return <LoadingPun />
   if (!user) return <GoogleLoginPrompt />
+  if (needsSetup) return <Navigate to="/setup" replace />
 
   return <>{children}</>
 }
@@ -33,6 +37,7 @@ export default function App() {
       <Toaster position="bottom-center" richColors />
       <Routes>
         <Route path="/gate" element={<GatePage />} />
+        <Route path="/setup" element={<SetupPage />} />
         <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
         <Route path="/gallery" element={<ProtectedRoute><GalleryPage /></ProtectedRoute>} />
         <Route path="/letters" element={<ProtectedRoute><LettersPage /></ProtectedRoute>} />

@@ -32,7 +32,7 @@ export default function FrogEasterEgg({ pageKey }: FrogEasterEggProps) {
         🐸
       </span>
       {found && (
-        <span className="absolute left-6 top-0 whitespace-nowrap font-hand text-xs text-orchid-deep bg-surface px-2 py-1 rounded-lg shadow-soft pointer-events-none">
+        <span className="absolute left-6 top-0 whitespace-nowrap font-hand text-sm text-orchid-deep bg-cream border border-orchid/20 px-3 py-1.5 rounded-full shadow-soft pointer-events-none tracking-wide">
           you found me 🐸
         </span>
       )}

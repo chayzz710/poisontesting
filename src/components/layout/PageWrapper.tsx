@@ -22,7 +22,7 @@ export default function PageWrapper({ children, pageKey, className = '' }: PageW
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: 'easeOut' }}
-        className={`pt-20 pb-16 px-8 max-w-6xl mx-auto ${className}`}
+        className={`pt-20 pb-16 px-4 sm:px-6 lg:px-10 max-w-7xl mx-auto w-full ${className}`}
       >
         {children}
       </motion.main>

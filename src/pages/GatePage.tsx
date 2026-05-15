@@ -25,7 +25,7 @@ export default function GatePage() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex flex-col items-center justify-center gap-8">
+    <div className="min-h-screen bg-cream flex flex-col items-center justify-center gap-8 px-4">
       {/* Sunflower */}
       <motion.div
         initial={{ y: -30, opacity: 0 }}
@@ -50,7 +50,7 @@ export default function GatePage() {
         onSubmit={handleSubmit}
         animate={shake ? { x: [-8, 8, -8, 8, 0] } : { x: 0 }}
         transition={{ duration: 0.4 }}
-        className="flex flex-col items-center gap-4 w-72"
+        className="flex flex-col items-center gap-4 w-full max-w-xs"
       >
         <input
           type="password"
@@ -66,7 +66,7 @@ export default function GatePage() {
           </p>
         )}
         <button type="submit" className="btn-primary w-full">
-          come in 
+          come in
         </button>
       </motion.form>
 
