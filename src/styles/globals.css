@@ -5,28 +5,66 @@
 @tailwind utilities;
 
 @layer base {
-  html, body, #root {
+
+  html,
+  body,
+  #root {
     @apply bg-cream text-chocolate font-body;
     min-height: 100%;
   }
-  h1, h2, h3 { @apply font-display; }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
 
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+
+    *,
+    *::before,
+    *::after {
       animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
   }
 }
 
 @layer components {
-  .btn-primary  { @apply px-5 py-2.5 rounded-full bg-sunflower text-chocolate font-medium shadow-soft hover:bg-sunflower-dark transition cursor-pointer; }
-  .btn-ghost    { @apply px-4 py-2 rounded-full text-chocolate hover:bg-sunflower/20 transition cursor-pointer; }
-  .btn-danger   { @apply px-5 py-2.5 rounded-full bg-red-100 text-red-700 font-medium hover:bg-red-200 transition cursor-pointer; }
-  .card         { @apply bg-surface rounded-2xl shadow-soft p-6; }
-  .polaroid     { @apply bg-white p-3 pb-6 shadow-polaroid; }
-  .hand-label   { @apply font-hand text-orchid-deep; }
-  .input-base   { @apply w-full px-4 py-2.5 rounded-xl border border-chocolate/20 bg-surface text-chocolate placeholder:text-chocolate/40 focus:outline-none focus:ring-2 focus:ring-sunflower/60 transition; }
-  .scrollbar-none { scrollbar-width: none; }
-  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .btn-primary {
+    @apply px-5 py-2.5 rounded-full bg-sunflower text-chocolate font-medium shadow-soft hover:bg-sunflower-dark transition cursor-pointer;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 rounded-full text-chocolate hover:bg-sunflower/20 transition cursor-pointer;
+  }
+
+  .btn-danger {
+    @apply px-5 py-2.5 rounded-full bg-red-100 text-red-700 font-medium hover:bg-red-200 transition cursor-pointer;
+  }
+
+  .card {
+    @apply bg-surface rounded-2xl shadow-soft p-6;
+  }
+
+  .polaroid {
+    @apply bg-white p-3 pb-6 shadow-polaroid;
+  }
+
+  .hand-label {
+    @apply font-hand text-orchid-deep;
+  }
+
+  .input-base {
+    @apply w-full px-4 py-2.5 rounded-xl border border-chocolate/20 bg-surface text-chocolate placeholder:text-chocolate/40 focus:outline-none focus:ring-2 focus:ring-sunflower/60 transition;
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }

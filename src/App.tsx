@@ -16,6 +16,8 @@ import PlaylistPage from './pages/PlaylistPage'
 import BucketListPage from './pages/BucketListPage'
 import SecretPage from './pages/SecretPage'
 import StyleguidePage from './pages/StyleguidePage'
+import NotFoundPage from './pages/NotFoundPage'
+import RiptideSlash from './components/motifs/RiptideSlash'
 import './styles/globals.css'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -35,6 +37,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Toaster position="bottom-center" richColors />
+      <RiptideSlash /> 
       <Routes>
         <Route path="/gate" element={<GatePage />} />
         <Route path="/setup" element={<SetupPage />} />
@@ -48,7 +51,7 @@ export default function App() {
         <Route path="/bucketlist" element={<ProtectedRoute><BucketListPage /></ProtectedRoute>} />
         <Route path="/secret" element={<ProtectedRoute><SecretPage /></ProtectedRoute>} />
         <Route path="/styleguide" element={<StyleguidePage />} />
-        <Route path="*" element={<Navigate to="/gate" replace />} />
+        <Route path="*" element={<NotFoundPage />} />   
       </Routes>
     </BrowserRouter>
   )

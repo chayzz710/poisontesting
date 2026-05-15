@@ -13,7 +13,7 @@ export default function HomePage() {
     <PageWrapper pageKey="home">
       <div className="flex flex-col items-center gap-12 py-10 px-4">
 
-        {/* Monthly anniversary banner — only shows on the 14th */}
+        {/* Monthly anniversary banner — only shows on the 9th */}
         <MonthlyAnniversaryBanner />
 
         {/* Header illustration */}

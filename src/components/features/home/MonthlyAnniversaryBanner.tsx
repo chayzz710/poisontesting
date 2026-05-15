@@ -1,113 +1,88 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '../../../lib/supabase'
-import type { Photo, MemoryJarNote } from '../../../types'
-
-type BannerData = {
-  photo: (Photo & { signedUrl: string }) | null
-  note: MemoryJarNote | null
-}
+import { differenceInMonths } from 'date-fns'
+import { RELATIONSHIP_START } from '../../../types'
 
 export default function MonthlyAnniversaryBanner() {
+  const [show, setShow] = useState(false)
+  const [dismissed, setDismissed] = useState(false)
+  const [photo, setPhoto] = useState<string | null>(null)
+
   const today = new Date()
   const isAnniversaryDay = today.getDate() === 9
-  const [data, setData] = useState<BannerData | null>(null)
-  const [visible, setVisible] = useState(true)
+  const monthsCount = differenceInMonths(today, RELATIONSHIP_START)
 
   useEffect(() => {
     if (!isAnniversaryDay) return
-    async function load() {
-      // Random old photo
-      const { data: photos } = await supabase
-        .from('photos')
-        .select('*')
-        .order('created_at', { ascending: true })
-        .limit(20)
+    // Don't show if already dismissed today
+    const key = `anniversary-dismissed-${today.getFullYear()}-${today.getMonth()}`
+    if (sessionStorage.getItem(key)) return
 
-      let photoWithUrl: (Photo & { signedUrl: string }) | null = null
-      if (photos && photos.length > 0) {
-        const pick = photos[Math.floor(Math.random() * photos.length)] as Photo
+    setShow(true)
+
+    // Fetch a random old photo
+    supabase
+      .from('photos')
+      .select('storage_path')
+      .order('taken_at', { ascending: true })
+      .limit(20)
+      .then(async ({ data }) => {
+        if (!data || data.length === 0) return
+        const random = data[Math.floor(Math.random() * data.length)]
         const { data: signed } = await supabase.storage
           .from('photos')
-          .createSignedUrl(pick.storage_path, 3600)
-        if (signed) photoWithUrl = { ...pick, signedUrl: signed.signedUrl }
-      }
+          .createSignedUrl(random.storage_path, 3600)
+        if (signed?.signedUrl) setPhoto(signed.signedUrl)
+      })
+  }, [])
 
-      // Random memory note
-      const { data: notes } = await supabase
-        .from('memory_jar_notes')
-        .select('*')
-        .order('created_at', { ascending: true })
-        .limit(20)
-
-      const note =
-        notes && notes.length > 0
-          ? (notes[Math.floor(Math.random() * notes.length)] as MemoryJarNote)
-          : null
-
-      setData({ photo: photoWithUrl, note })
-    }
-    load()
-  }, [isAnniversaryDay])
+  const handleDismiss = () => {
+    const key = `anniversary-dismissed-${today.getFullYear()}-${today.getMonth()}`
+    sessionStorage.setItem(key, 'true')
+    setDismissed(true)
+  }
 
   if (!isAnniversaryDay) return null
 
   return (
     <AnimatePresence>
-      {visible && (
+      {show && !dismissed && (
         <motion.div
-          key="anniversary-banner"
-          initial={{ opacity: 0, y: -12 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -12 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-2xl bg-sunflower/20 border border-sunflower rounded-2xl p-6 relative"
+          exit={{ opacity: 0, y: -20 }}
+          className="relative bg-gradient-to-r from-sunflower/30 via-orchid/20 to-sunflower/30 border border-sunflower/40 rounded-2xl p-5 mb-8 flex items-center gap-5 overflow-hidden"
         >
-          <button
-            onClick={() => setVisible(false)}
-            className="absolute top-3 right-4 text-chocolate/40 hover:text-chocolate text-lg transition"
-            aria-label="Dismiss"
-          >
-            ×
-          </button>
+          {/* Background shimmer */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse pointer-events-none" />
 
-          <p className="font-hand text-orchid-deep text-sm uppercase tracking-widest mb-1">
-            happy monthly anniversary 🌻
-          </p>
-          <p className="font-display text-xl text-chocolate mb-4">
-            {today.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })} — another month around the sun together
-          </p>
-
-          {data && (
-            <div className="flex gap-4 items-start">
-              {data.photo && (
-                <div className="polaroid w-28 shrink-0 -rotate-2">
-                  <img
-                    src={data.photo.signedUrl}
-                    alt={data.photo.caption ?? 'A memory'}
-                    className="w-full aspect-square object-cover"
-                  />
-                  {data.photo.caption && (
-                    <p className="font-hand text-xs text-chocolate/70 mt-1 text-center truncate">
-                      {data.photo.caption}
-                    </p>
-                  )}
-                </div>
-              )}
-              {data.note && (
-                <div className="flex-1 bg-white rounded-xl p-4 shadow-soft">
-                  <p className="font-hand text-base text-chocolate leading-snug">
-                    "{data.note.body}"
-                  </p>
-                </div>
-              )}
-              {!data.photo && !data.note && (
-                <p className="font-hand text-chocolate/60 text-base">
-                  Add some photos and memories to celebrate future months! 🥚
-                </p>
-              )}
-            </div>
+          {/* Photo */}
+          {photo && (
+            <img
+              src={photo}
+              alt="a memory"
+              className="w-16 h-16 rounded-xl object-cover shadow-polaroid flex-shrink-0"
+            />
           )}
+
+          {/* Text */}
+          <div className="flex-1">
+            <p className="font-display text-xl text-chocolate">
+              happy {monthsCount} {monthsCount === 1 ? 'month' : 'months'} 💛
+            </p>
+            <p className="font-hand text-orchid text-base mt-0.5">
+              today is our monthly anniversary 🌻
+            </p>
+          </div>
+
+          {/* Dismiss */}
+          <button
+            onClick={handleDismiss}
+            className="flex-shrink-0 text-chocolate/30 hover:text-chocolate/60 transition text-sm"
+          >
+            ✕
+          </button>
         </motion.div>
       )}
     </AnimatePresence>
