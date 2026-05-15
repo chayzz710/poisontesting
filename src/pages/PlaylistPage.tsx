@@ -6,15 +6,12 @@ import { useSongs } from '../hooks/useSongs'
 import { Button } from '../components/ui/Button'
 import { SunflowerDivider } from '../components/motifs/SunflowerDivider'
 
-// 🎵 Replace this with your actual Spotify track ID
-// Get it from a Spotify link: open.spotify.com/track/THIS_PART_HERE
-const ANTHEM_TRACK_ID = 'YOUR_TRACK_ID_HERE'
-
 export default function PlaylistPage() {
   const { songs, loading, refetch } = useSongs()
   const [showAdd, setShowAdd] = useState(false)
 
-  const hasAnthem = ANTHEM_TRACK_ID !== 'YOUR_TRACK_ID_HERE'
+  const anthem = songs.find((s) => s.is_anthem)
+  const rest = songs.filter((s) => !s.is_anthem)
 
   return (
     <PageWrapper pageKey="playlist">
@@ -31,12 +28,12 @@ export default function PlaylistPage() {
         </Button>
       </div>
 
-      {/* Anthem embed */}
-      {hasAnthem && (
+      {/* Anthem */}
+      {anthem ? (
         <div className="mb-8">
           <p className="font-hand text-orchid/60 text-sm mb-3">🎵 our song</p>
           <iframe
-            src={`https://open.spotify.com/embed/track/${ANTHEM_TRACK_ID}?utm_source=generator`}
+            src={`https://open.spotify.com/embed/track/${anthem.spotify_track_id}?utm_source=generator`}
             width="100%"
             height="152"
             frameBorder="0"
@@ -44,13 +41,14 @@ export default function PlaylistPage() {
             loading="lazy"
             className="rounded-2xl"
           />
+          {anthem.note && (
+            <p className="font-hand text-chocolate/50 text-sm mt-2 px-1">"{anthem.note}"</p>
+          )}
         </div>
-      )}
-
-      {!hasAnthem && (
+      ) : !loading && songs.length > 0 && (
         <div className="mb-8 p-5 bg-sunflower/10 rounded-2xl border border-sunflower/30">
           <p className="font-hand text-chocolate/50 text-sm">
-            🎵 set your anthem — paste your Spotify track ID into <code className="bg-white px-1 rounded">ANTHEM_TRACK_ID</code> in <code className="bg-white px-1 rounded">PlaylistPage.tsx</code>
+            🎵 no anthem set yet — add a song and mark it as your anthem using the ⭐ button
           </p>
         </div>
       )}
@@ -66,7 +64,7 @@ export default function PlaylistPage() {
             <div className="text-5xl animate-tilt">🌻</div>
             <p className="font-hand text-orchid text-xl">tuning in…</p>
           </div>
-        ) : songs.length === 0 ? (
+        ) : rest.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
             <div className="text-6xl">🎵</div>
             <p className="font-display text-2xl text-chocolate/60">no songs yet</p>
@@ -77,8 +75,8 @@ export default function PlaylistPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {songs.map((song, i) => (
-              <SongRow key={song.id} song={song} index={i} onDelete={refetch} />
+            {rest.map((song, i) => (
+              <SongRow key={song.id} song={song} index={i} onUpdate={refetch} />
             ))}
           </div>
         )}

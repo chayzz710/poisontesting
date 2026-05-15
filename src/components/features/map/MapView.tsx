@@ -62,7 +62,7 @@ export default function MapView({ pins, addMode, onMapClick, onPinClick, loading
 
   return (
     <MapContainer
-      center={[20.5937, 78.9629]} // Centre of India — change to your city
+      center={[17.3850, 78.4867]} // Centre of India — change to your city
       zoom={5}
       style={{ width: '100%', height: '100%' }}
       className={addMode ? 'cursor-crosshair' : ''}

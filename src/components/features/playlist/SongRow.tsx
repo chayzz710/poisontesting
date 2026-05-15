@@ -7,10 +7,10 @@ import type { Song } from '../../../types'
 interface SongRowProps {
   song: Song
   index: number
-  onDelete: () => void
+  onUpdate: () => void
 }
 
-export default function SongRow({ song, index, onDelete }: SongRowProps) {
+export default function SongRow({ song, index, onUpdate }: SongRowProps) {
   const { user } = useUser()
   const isOwner = user?.id === song.added_by
 
@@ -19,7 +19,25 @@ export default function SongRow({ song, index, onDelete }: SongRowProps) {
     const { error } = await supabase.from('songs').delete().eq('id', song.id)
     if (error) { toast.error('could not remove'); return }
     toast.success('song removed')
-    onDelete()
+    onUpdate()
+  }
+
+  const handleSetAnthem = async () => {
+  // Clear anthem on all YOUR songs only
+  await supabase
+    .from('songs')
+    .update({ is_anthem: false })
+    .eq('added_by', user?.id)
+
+  // Set this one as anthem
+  const { error } = await supabase
+    .from('songs')
+    .update({ is_anthem: true })
+    .eq('id', song.id)
+
+  if (error) { toast.error('could not set anthem'); return }
+  toast.success('anthem set 🎵')
+  onUpdate()
   }
 
   return (
@@ -47,16 +65,28 @@ export default function SongRow({ song, index, onDelete }: SongRowProps) {
         )}
       </div>
 
-      {/* Delete */}
-      {isOwner && (
+      {/* Actions */}
+      <div className="flex flex-col gap-2 flex-shrink-0 mt-1">
+        {/* Set as anthem */}
         <button
-          onClick={handleDelete}
-          className="text-chocolate/20 hover:text-chocolate/50 transition mt-1 flex-shrink-0"
-          title="remove"
+          onClick={handleSetAnthem}
+          title="set as our song"
+          className="text-xl opacity-30 hover:opacity-100 transition"
         >
-          ✕
+          ⭐
         </button>
-      )}
+
+        {/* Delete — owner only */}
+        {isOwner && (
+          <button
+            onClick={handleDelete}
+            className="text-chocolate/20 hover:text-chocolate/50 transition text-sm"
+            title="remove"
+          >
+            ✕
+          </button>
+        )}
+      </div>
     </motion.div>
   )
 }

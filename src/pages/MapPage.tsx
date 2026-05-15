@@ -26,7 +26,7 @@ export default function MapPage() {
   const filteredPins = filter === 'all' ? pins : pins.filter((p) => p.pin_type === filter)
 
   const handleMapClick = (lat: number, lng: number) => {
-    if (!addMode) return
+    if (!addMode || pendingLatLng) return
     setPendingLatLng({ lat, lng })
   }
 
@@ -76,7 +76,7 @@ export default function MapPage() {
       <div className="rounded-2xl overflow-hidden shadow-soft" style={{ height: '60vh' }}>
         <MapView
           pins={filteredPins}
-          addMode={addMode}
+          addMode={addMode && !pendingLatLng}
           onMapClick={handleMapClick}
           onPinClick={setSelectedPin}
           loading={loading}
