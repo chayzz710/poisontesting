@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion'
 import { format, parseISO } from 'date-fns'
 import { Button } from '../../ui/Button'
-import type { MemoryNote } from '../../../types'
+import type { MemoryJarNote } from '../../../types'
 
 interface NoteModalProps {
-  note: MemoryNote
+  note: MemoryJarNote
   onClose: () => void
 }
 

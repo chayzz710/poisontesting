@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import PageWrapper from '../components/layout/PageWrapper'
 import PunCard from '../components/features/puns/PunCard'
 import AddPunModal from '../components/features/puns/AddPunModal'
@@ -22,7 +22,7 @@ export default function PunWallPage() {
   })
 
   return (
-    <PageWrapper pageName="puns">
+    <PageWrapper pageKey="puns">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>

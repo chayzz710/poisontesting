@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { format, parseISO } from 'date-fns'
 import { supabase } from '../../../lib/supabase'
 import { Button } from '../../ui/Button'

@@ -7,11 +7,11 @@ import KinderJarSVG from '../components/features/memoryjar/KinderJarSVG'
 import { useMemoryJar } from '../hooks/useMemoryJar'
 import { Button } from '../components/ui/Button'
 import { seededTilt, seededOffset } from '../lib/utils'
-import type { MemoryNote } from '../types'
+import type { MemoryJarNote } from '../types'
 
 export default function MemoryJarPage() {
   const { notes, loading, refetch } = useMemoryJar()
-  const [selectedNote, setSelectedNote] = useState<MemoryNote | null>(null)
+  const [selectedNote, setSelectedNote] = useState<MemoryJarNote | null>(null)
   const [showAdd, setShowAdd] = useState(false)
   const [shaking, setShaking] = useState(false)
 
@@ -26,7 +26,7 @@ export default function MemoryJarPage() {
   }
 
   return (
-    <PageWrapper pageName="jar">
+    <PageWrapper pageKey="jar">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>

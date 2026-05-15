@@ -11,3 +11,5 @@ export default function SunflowerDivider({ className = '' }: SunflowerDividerPro
     </div>
   )
 }
+
+export { SunflowerDivider }
