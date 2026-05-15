@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion'
 import { supabase } from '../../../lib/supabase'
 import { useUser } from '../../../lib/auth'
-import { Button } from '../../ui/Button'
 import { toast } from 'sonner'
 import type { Song } from '../../../types'
 

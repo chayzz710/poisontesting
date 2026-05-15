@@ -17,7 +17,7 @@ export default function PlaylistPage() {
   const hasAnthem = ANTHEM_TRACK_ID !== 'YOUR_TRACK_ID_HERE'
 
   return (
-    <PageWrapper pageName="playlist">
+    <PageWrapper pageKey="playlist">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>

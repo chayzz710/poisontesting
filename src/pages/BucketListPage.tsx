@@ -4,7 +4,7 @@ import BucketItem from '../components/features/bucketlist/BucketItem'
 import AddItemModal from '../components/features/bucketlist/AddItemModal'
 import { useBucketList } from '../hooks/useBucketList'
 import { Button } from '../components/ui/Button'
-import { ChessWatermark } from '../components/motifs/ChessWatermark'
+import  ChessWatermark from '../components/motifs/ChessWatermark'
 import { motion } from 'framer-motion'
 
 export default function BucketListPage() {
@@ -15,7 +15,7 @@ export default function BucketListPage() {
   const done = items.filter((i) => i.is_done)
 
   return (
-    <PageWrapper pageName="bucketlist">
+    <PageWrapper pageKey="bucketlist">
       {/* Chess watermark */}
       <div className="fixed inset-0 pointer-events-none z-0 flex items-center justify-center opacity-[0.03]">
         <ChessWatermark />

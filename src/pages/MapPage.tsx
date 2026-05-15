@@ -31,7 +31,7 @@ export default function MapPage() {
   }
 
   return (
-    <PageWrapper pageName="map">
+    <PageWrapper pageKey="map">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
