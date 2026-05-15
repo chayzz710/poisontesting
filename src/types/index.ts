@@ -11,7 +11,7 @@ export const OWNERS: OwnerMap = {
 }
 
 // The start date of the relationship
-export const RELATIONSHIP_START = new Date('2024-02-14') // 💛 update me!
+export const RELATIONSHIP_START = new Date('2025-12-09') // 💛 update me!
 
 // ── DB row types (mirrors Supabase schema) ────────────────
 export interface Profile {
@@ -48,7 +48,7 @@ export interface Letter {
   profiles?: Pick<Profile, 'display_name' | 'nickname' | 'avatar_url'>
 }
 
-export interface MemoryNote {
+export interface MemoryJarNote {
   id: string
   author_id: string
   body: string

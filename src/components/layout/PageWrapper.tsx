@@ -13,9 +13,6 @@ export default function PageWrapper({ children, pageKey, className = '' }: PageW
     <div className="min-h-screen bg-cream">
       <Navbar />
 
-      {/* Sunflower top border */}
-      <div className="fixed top-14 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-sunflower/60 to-transparent z-30 pointer-events-none" />
-
       {/* Page content */}
       <motion.main
         key={pageKey}
