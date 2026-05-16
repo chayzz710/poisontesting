@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import Navbar from './Navbar'
 import FrogEasterEgg from '../motifs/FrogEasterEgg'
+import { DinoPerPage } from '../motifs/DinoEasterEgg'
 
 interface PageWrapperProps {
   children: React.ReactNode
@@ -26,6 +27,7 @@ export default function PageWrapper({ children, pageKey, className = '' }: PageW
 
       {/* Hidden frog — different corner each page */}
       <FrogEasterEgg pageKey={pageKey} />
+      <DinoPerPage pageKey={pageKey} />
     </div>
   )
 }
