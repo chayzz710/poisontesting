@@ -36,8 +36,9 @@ export default function SetupPage() {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
   const [favThings, setFavThings] = useState(['', '', ''])
+  const [selectedLang, setSelectedLang] = useState<string>('')
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
 
@@ -142,12 +143,21 @@ export default function SetupPage() {
             <label className="text-sm font-medium text-chocolate/70">love language (optional)</label>
             <div className="flex flex-wrap gap-2">
               {LOVE_LANGUAGES.map(lang => (
-                <label key={lang} className="cursor-pointer">
-                  <input type="radio" value={lang} className="sr-only" {...register('love_language')} />
-                  <span className="inline-block px-3 py-1.5 rounded-full border border-chocolate/20 text-sm font-hand text-chocolate/70 hover:border-sunflower hover:text-chocolate transition cursor-pointer has-[:checked]:bg-sunflower has-[:checked]:border-sunflower has-[:checked]:text-chocolate">
-                    {lang}
-                  </span>
-                </label>
+                <button
+                  key={lang}
+                  type="button"
+                  onClick={() => {
+                    setSelectedLang(lang)
+                    setValue('love_language', lang)
+                  }}
+                  className={`px-3 py-1.5 rounded-full border text-sm font-hand transition cursor-pointer ${
+                    selectedLang === lang
+                      ? 'bg-sunflower border-sunflower text-chocolate'
+                      : 'border-chocolate/20 text-chocolate/70 hover:border-sunflower hover:text-chocolate'
+                  }`}
+                >
+                  {lang}
+                </button>
               ))}
             </div>
           </div>
