@@ -22,6 +22,8 @@ export default function PhotoModal({ photo, onClose, onUpdate }: PhotoModalProps
   const [chocolateRating, setChocolateRating] = useState<number>(photo.chocolate_rating ?? 0)
   const [saving, setSaving] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
 
   const isOwner = user?.id === photo.uploaded_by
 
@@ -48,17 +50,34 @@ export default function PhotoModal({ photo, onClose, onUpdate }: PhotoModalProps
   }
 
   const handleDelete = async () => {
+    setDeleting(true)
     try {
-      // Delete from storage
-      await supabase.storage.from('photos').remove([photo.storage_path])
+      // Delete from storage first
+      const { error: storageError } = await supabase.storage
+        .from('photos')
+        .remove([photo.storage_path])
+      
+      if (storageError) {
+        console.error('storage delete error:', storageError)
+        // Don't throw — storage path may already be gone. Still delete the DB row.
+      }
+
       // Delete from DB
-      const { error } = await supabase.from('photos').delete().eq('id', photo.id)
-      if (error) throw error
-      toast.success('photo deleted')
-      onClose()
-      onUpdate()
+      const { error: dbError } = await supabase
+        .from('photos')
+        .delete()
+        .eq('id', photo.id)
+
+      if (dbError) throw dbError
+
+      toast.success('memory deleted 🌻')
+      onUpdate()  // refetch the list
+      onClose()   // close modal AFTER update so parent clears selectedPhoto
     } catch {
       toast.error('could not delete — try again')
+    } finally {
+      setDeleting(false)
+      setConfirmDelete(false)
     }
   }
 
@@ -188,11 +207,11 @@ export default function PhotoModal({ photo, onClose, onUpdate }: PhotoModalProps
                   >
                     <p className="text-red-700 mb-2 font-medium">delete this memory forever?</p>
                     <div className="flex gap-2">
-                      <Button variant="ghost" size="sm" onClick={() => setConfirmDelete(false)}>
+                      <Button variant="ghost" size="sm" onClick={() => setConfirmDelete(false)} disabled={deleting}>
                         no, keep it
                       </Button>
-                      <Button variant="danger" size="sm" onClick={handleDelete}>
-                        yes, delete
+                      <Button variant="danger" size="sm" onClick={handleDelete} disabled={deleting}>
+                        {deleting ? 'deleting…' : 'yes, delete'}
                       </Button>
                     </div>
                   </motion.div>

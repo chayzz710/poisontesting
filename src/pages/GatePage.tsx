@@ -66,7 +66,7 @@ export default function GatePage() {
           </p>
         )}
         <button type="submit" className="btn-primary w-full">
-          come in
+          come in 🦖
         </button>
       </motion.form>
 

@@ -6,8 +6,8 @@ export interface OwnerMap {
 
 // Fill these in after first Google logins → Supabase → Auth → Users
 export const OWNERS: OwnerMap = {
-  char: 'TBD',
-  rag: 'TBD',
+  char: '43dd8722-e371-4a71-bf88-8aa2a51cddf3',
+  rag: 'dd08c41e-e9e8-47bd-b368-f1762642f3d8',
 }
 
 // The start date of the relationship

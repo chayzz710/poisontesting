@@ -55,7 +55,7 @@ export default function AddItemModal({ onClose, onSuccess }: AddItemModalProps) 
         <div className="flex gap-3 justify-end pt-1">
           <Button variant="ghost" onClick={onClose} disabled={saving}>cancel</Button>
           <Button variant="primary" onClick={handleSave} disabled={!title.trim() || saving}>
-            {saving ? 'adding…' : 'add it ✨'}
+            {saving ? 'adding…' : 'add it 🦖'}
           </Button>
         </div>
       </div>

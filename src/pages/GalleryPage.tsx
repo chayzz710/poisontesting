@@ -38,7 +38,7 @@ export default function GalleryPage() {
                   : 'text-chocolate/60 hover:text-chocolate'
               }`}
             >
-               messy
+               messy 🐱
             </button>
             <button
               onClick={() => setViewMode('time')}
@@ -53,7 +53,7 @@ export default function GalleryPage() {
           </div>
 
           <Button variant="primary" onClick={() => setShowUpload(true)}>
-            + add photo
+            + add photo 
           </Button>
         </div>
       </div>
@@ -70,7 +70,7 @@ export default function GalleryPage() {
           <p className="font-display text-2xl text-chocolate/60">no photos yet</p>
           <p className="font-hand text-orchid text-lg">be the first to add a memory 🌻</p>
           <Button variant="primary" onClick={() => {console.log('clicked'); setShowUpload(true)}} className="mt-2">
-            + add the first photo
+            + add the first photo 🦖
           </Button>
         </div>
       ) : viewMode === 'messy' ? (

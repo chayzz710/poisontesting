@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { format, parseISO } from 'date-fns'
 import { supabase } from '../../../lib/supabase'
+import { useUser } from '../../../lib/auth'
 import { Button } from '../../ui/Button'
 import { toast } from 'sonner'
 import type { Letter } from '../../../types'
@@ -15,39 +16,56 @@ interface LetterModalProps {
 type Stage = 'confirm' | 'opening' | 'reading'
 
 export default function LetterModal({ letter, onClose, onUpdate }: LetterModalProps) {
+  const { user } = useUser()
   const isSealed = !letter.opened_at
   const needsConfirm = isSealed && letter.is_open_when
+  const isOwner = user?.id === letter.author_id
 
-  const [stage, setStage] = useState<Stage>(
-    needsConfirm ? 'confirm' : 'reading'
-  )
+  const [stage, setStage] = useState<Stage>(needsConfirm ? 'confirm' : 'reading')
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   const openLetter = async () => {
     setStage('opening')
-    // Animate the flap opening, then mark as opened
     setTimeout(async () => {
       const { error } = await supabase
         .from('letters')
         .update({ opened_at: new Date().toISOString() })
         .eq('id', letter.id)
-      if (error) {
-        toast.error('could not open letter')
-        return
-      }
+      if (error) { toast.error('could not open letter'); return }
       setStage('reading')
       onUpdate()
     }, 1200)
   }
 
   const handleReseal = async () => {
-  const { error } = await supabase
-    .from('letters')
-    .update({ opened_at: null })
-    .eq('id', letter.id)
-  if (error) { toast.error('could not reseal'); return }
-  toast.success('letter resealed 🔒')
-  onClose()
-  onUpdate()
+    const { error } = await supabase
+      .from('letters')
+      .update({ opened_at: null })
+      .eq('id', letter.id)
+    if (error) { toast.error('could not reseal'); return }
+    toast.success('letter resealed 🔒')
+    onClose()
+    onUpdate()
+  }
+
+  const handleDelete = async () => {
+    setDeleting(true)
+    try {
+      const { error } = await supabase
+        .from('letters')
+        .delete()
+        .eq('id', letter.id)
+      if (error) throw error
+      toast.success('letter deleted')
+      onUpdate()
+      onClose()
+    } catch {
+      toast.error('could not delete')
+    } finally {
+      setDeleting(false)
+      setConfirmDelete(false)
+    }
   }
 
   return (
@@ -68,7 +86,7 @@ export default function LetterModal({ letter, onClose, onUpdate }: LetterModalPr
         transition={{ type: 'spring', stiffness: 280, damping: 26 }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Confirm stage — "are you sure?" */}
+        {/* Confirm stage */}
         {stage === 'confirm' && (
           <div className="bg-cream rounded-3xl shadow-polaroid p-8 text-center">
             <div className="text-5xl mb-4">🔒</div>
@@ -89,12 +107,10 @@ export default function LetterModal({ letter, onClose, onUpdate }: LetterModalPr
           </div>
         )}
 
-        {/* Opening stage — envelope animation */}
+        {/* Opening stage */}
         {stage === 'opening' && (
           <div className="bg-cream rounded-3xl shadow-polaroid overflow-hidden">
-            {/* Envelope body */}
             <div className="relative bg-sunflower/20 p-8 flex flex-col items-center justify-center min-h-48">
-              {/* Flap animation */}
               <motion.div
                 className="absolute top-0 left-0 right-0"
                 initial={{ rotateX: 0, originY: 0 }}
@@ -106,8 +122,6 @@ export default function LetterModal({ letter, onClose, onUpdate }: LetterModalPr
                   <polygon points="0,0 400,0 200,80" fill="#F5C842" opacity="0.4" />
                 </svg>
               </motion.div>
-
-              {/* Paper sliding up */}
               <motion.div
                 className="bg-white rounded-lg shadow px-6 py-4 mt-8"
                 initial={{ y: 20, opacity: 0 }}
@@ -120,10 +134,9 @@ export default function LetterModal({ letter, onClose, onUpdate }: LetterModalPr
           </div>
         )}
 
-        {/* Reading stage — full letter */}
+        {/* Reading stage */}
         {stage === 'reading' && (
           <div className="bg-cream rounded-3xl shadow-polaroid overflow-hidden max-h-[80vh] flex flex-col">
-            {/* Letter header */}
             <div className="bg-sunflower/20 px-8 pt-8 pb-4">
               <button
                 onClick={onClose}
@@ -139,7 +152,6 @@ export default function LetterModal({ letter, onClose, onUpdate }: LetterModalPr
               </p>
             </div>
 
-            {/* Letter body */}
             <motion.div
               className="flex-1 overflow-y-auto px-8 py-6"
               initial={{ opacity: 0, y: 10 }}
@@ -151,13 +163,55 @@ export default function LetterModal({ letter, onClose, onUpdate }: LetterModalPr
               </p>
             </motion.div>
 
-            <div className="px-8 pb-6 flex gap-3 justify-end">
-              <Button variant="ghost" size="sm" onClick={onClose}>
-                tuck it away
-              </Button>
-              <Button variant="danger" size="sm" onClick={handleReseal}>
-                reseal 🔒
-              </Button>
+            <div className="px-8 pb-6 pt-3 border-t border-sunflower/20 flex flex-col gap-2">
+              {/* Normal actions */}
+              <div className="flex gap-3 justify-end">
+                <Button variant="ghost" size="sm" onClick={onClose}>
+                  tuck it away
+                </Button>
+                {letter.is_open_when && (
+                  <Button variant="ghost" size="sm" onClick={handleReseal}>
+                    reseal 🔒
+                  </Button>
+                )}
+                {isOwner && !confirmDelete && (
+                  <Button variant="danger" size="sm" onClick={() => setConfirmDelete(true)}>
+                    🗑 delete
+                  </Button>
+                )}
+              </div>
+
+              {/* Inline delete confirm */}
+              <AnimatePresence>
+                {confirmDelete && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="bg-red-50 rounded-xl p-3 flex items-center gap-3">
+                      <p className="font-hand text-sm text-red-500 flex-1">
+                        delete this letter forever?
+                      </p>
+                      <button
+                        onClick={() => setConfirmDelete(false)}
+                        disabled={deleting}
+                        className="font-hand text-sm text-chocolate/40 hover:text-chocolate transition"
+                      >
+                        keep it
+                      </button>
+                      <button
+                        onClick={handleDelete}
+                        disabled={deleting}
+                        className="font-hand text-sm text-red-400 hover:text-red-600 font-medium transition"
+                      >
+                        {deleting ? 'deleting…' : 'yes, delete'}
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         )}

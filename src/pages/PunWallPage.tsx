@@ -77,6 +77,7 @@ export default function PunWallPage() {
                 pun={pun}
                 currentUserId={user?.id ?? ''}
                 onRate={refetch}
+                onDelete = {refetch}
                 index={i}
               />
             ))}

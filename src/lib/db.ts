@@ -214,3 +214,76 @@ export async function completeBucketItem(itemId: string) {
   if (error) throw error
   return data
 }
+
+// ── Photos ────────────────────────────────────────────────
+export async function deletePhoto(photoId: string) {
+  const { error } = await supabase
+    .from('photos')
+    .delete()
+    .eq('id', photoId)
+  if (error) throw error
+}
+
+// ── Letters ───────────────────────────────────────────────
+export async function deleteLetter(letterId: string) {
+  const { error } = await supabase
+    .from('letters')
+    .delete()
+    .eq('id', letterId)
+  if (error) throw error
+}
+
+// ── Memory Jar ────────────────────────────────────────────
+export async function deleteMemoryNote(noteId: string) {
+  const { error } = await supabase
+    .from('memory_jar_notes')
+    .delete()
+    .eq('id', noteId)
+  if (error) throw error
+}
+
+// ── Puns ──────────────────────────────────────────────────
+export async function deletePun(punId: string) {
+  const { error } = await supabase
+    .from('puns')
+    .delete()
+    .eq('id', punId)
+  if (error) throw error
+}
+
+// ── Map Pins ──────────────────────────────────────────────
+export async function deleteMapPin(pinId: string) {
+  const { error } = await supabase
+    .from('map_pins')
+    .delete()
+    .eq('id', pinId)
+  if (error) throw error
+}
+
+// ── Songs ─────────────────────────────────────────────────
+export async function deleteSong(songId: string) {
+  const { error } = await supabase
+    .from('songs')
+    .delete()
+    .eq('id', songId)
+  if (error) throw error
+}
+
+// ── Bucket List ───────────────────────────────────────────
+export async function deleteBucketItem(itemId: string) {
+  const { error } = await supabase
+    .from('bucket_items')
+    .delete()
+    .eq('id', itemId)
+  if (error) throw error
+}
+
+export async function uncompleteBucketItem(itemId: string) {
+  const { error } = await supabase
+    .from('bucket_items')
+    .update({ is_done: false, done_at: null })
+    .eq('id', itemId)
+    .select()
+    .single()
+  if (error) throw error
+}

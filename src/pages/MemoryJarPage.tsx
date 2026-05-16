@@ -114,6 +114,7 @@ export default function MemoryJarPage() {
           <NoteModal
             note={selectedNote}
             onClose={() => setSelectedNote(null)}
+            onUpdate={refetch}
           />
         )}
       </AnimatePresence>

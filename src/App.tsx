@@ -18,6 +18,7 @@ import SecretPage from './pages/SecretPage'
 import StyleguidePage from './pages/StyleguidePage'
 import NotFoundPage from './pages/NotFoundPage'
 import RiptideSlash from './components/motifs/RiptideSlash'
+import ProfilePage from './pages/ProfilePage'
 import './styles/globals.css'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -52,6 +53,7 @@ export default function App() {
         <Route path="/secret" element={<ProtectedRoute><SecretPage /></ProtectedRoute>} />
         <Route path="/styleguide" element={<StyleguidePage />} />
         <Route path="*" element={<NotFoundPage />} />   
+        <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   )
