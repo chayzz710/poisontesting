@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { supabase } from '../lib/supabase'
+import { useUser } from '../lib/auth'
 import { OWNERS } from '../types'
 import type { Profile } from '../types'
 
@@ -52,9 +53,19 @@ interface PersonCardProps {
   stats: ProfileStats
   delay: number
   accent: 'sunflower' | 'orchid'
+  isOwn: boolean
 }
 
-function PersonCard({ profile, stats, delay, accent }: PersonCardProps) {
+function AvatarDisplay({ url, name }: { url?: string | null; name?: string | null }) {
+  if (!url) return <div className="w-20 h-20 rounded-full bg-white/60 flex items-center justify-center text-4xl flex-shrink-0 shadow-soft">🌻</div>
+  const isEmoji = !url.startsWith('http')
+  if (isEmoji) return <div className="w-20 h-20 rounded-full bg-white/60 flex items-center justify-center text-4xl flex-shrink-0 shadow-soft">{url}</div>
+  return <img src={url} alt={name ?? ''} className="w-20 h-20 rounded-full object-cover shadow-soft flex-shrink-0" />
+}
+
+function PersonCard({ profile, stats, delay, accent, isOwn }: PersonCardProps) {
+  const navigate = useNavigate()
+
   const accentClasses = {
     sunflower: {
       header:  'bg-sunflower/20',
@@ -93,18 +104,8 @@ function PersonCard({ profile, stats, delay, accent }: PersonCardProps) {
     >
       {/* Header */}
       <div className={`${accentClasses.header} px-8 pt-8 pb-6 flex items-center gap-5`}>
-        {profile.avatar_url ? (
-          <img
-            src={profile.avatar_url}
-            alt={profile.display_name ?? ''}
-            className="w-20 h-20 rounded-full object-cover shadow-soft flex-shrink-0"
-          />
-        ) : (
-          <div className="w-20 h-20 rounded-full bg-white/60 flex items-center justify-center text-4xl flex-shrink-0 shadow-soft">
-            🌻
-          </div>
-        )}
-        <div>
+        <AvatarDisplay url={profile.avatar_url} name={profile.display_name} />
+        <div className="flex-1 min-w-0">
           <h2 className="font-display text-2xl text-chocolate leading-tight">
             {profile.display_name ?? 'someone lovely'}
           </h2>
@@ -117,6 +118,15 @@ function PersonCard({ profile, stats, delay, accent }: PersonCardProps) {
             </span>
           )}
         </div>
+        {/* Edit button — only on your own card */}
+        {isOwn && (
+          <button
+            onClick={() => navigate('/setup')}
+            className="self-start text-xs font-hand text-chocolate/30 hover:text-chocolate/70 transition px-2 py-1 rounded-full hover:bg-chocolate/5"
+          >
+            ✏️ edit
+          </button>
+        )}
       </div>
 
       <div className="px-8 py-6 flex flex-col gap-6 flex-1">
@@ -170,14 +180,14 @@ function PersonCard({ profile, stats, delay, accent }: PersonCardProps) {
 
 export default function ProfilePage() {
   const navigate = useNavigate()
-  const [charProfile, setCharProfile]   = useState<Profile | null>(null)
-  const [ragProfile, setRagProfile]     = useState<Profile | null>(null)
-  const [charStats, setCharStats]       = useState<ProfileStats | null>(null)
-  const [ragStats, setRagStats]         = useState<ProfileStats | null>(null)
-  const [loading, setLoading]           = useState(true)
+  const { user } = useUser()
+  const [charProfile, setCharProfile] = useState<Profile | null>(null)
+  const [ragProfile, setRagProfile]   = useState<Profile | null>(null)
+  const [charStats, setCharStats]     = useState<ProfileStats | null>(null)
+  const [ragStats, setRagStats]       = useState<ProfileStats | null>(null)
+  const [loading, setLoading]         = useState(true)
 
   useEffect(() => {
-    // If OWNERS haven't been filled in yet, don't crash
     if (OWNERS.char === 'TBD' || OWNERS.rag === 'TBD') {
       setLoading(false)
       return
@@ -198,7 +208,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-cream px-10 py-12">
-      {/* Back button */}
       <motion.button
         initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: 1, x: 0 }}
@@ -208,7 +217,6 @@ export default function ProfilePage() {
         ← back
       </motion.button>
 
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -232,13 +240,14 @@ export default function ProfilePage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-2 gap-8 max-w-4xl mx-auto whitespace-nowrap">
           {charProfile && charStats && (
             <PersonCard
               profile={charProfile}
               stats={charStats}
               delay={0.1}
               accent="sunflower"
+              isOwn={user?.id === OWNERS.char}
             />
           )}
           {ragProfile && ragStats && (
@@ -247,6 +256,7 @@ export default function ProfilePage() {
               stats={ragStats}
               delay={0.2}
               accent="orchid"
+              isOwn={user?.id === OWNERS.rag}
             />
           )}
         </div>

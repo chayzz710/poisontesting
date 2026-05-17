@@ -15,6 +15,13 @@ interface PhotoModalProps {
   onUpdate: () => void
 }
 
+function UploaderAvatar({ avatarUrl }: { avatarUrl?: string | null }) {
+  if (!avatarUrl) return <span className="text-lg">🌻</span>
+  const isEmoji = !avatarUrl.startsWith('http')
+  if (isEmoji) return <span className="text-lg">{avatarUrl}</span>
+  return <img src={avatarUrl} alt="" className="w-6 h-6 rounded-full object-cover" />
+}
+
 export default function PhotoModal({ photo, onClose, onUpdate }: PhotoModalProps) {
   const { user } = useUser()
   const [editing, setEditing] = useState(false)
@@ -24,8 +31,8 @@ export default function PhotoModal({ photo, onClose, onUpdate }: PhotoModalProps
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
 
-
   const isOwner = user?.id === photo.uploaded_by
+  const profiles = (photo as any).profiles
 
   const handleSave = async () => {
     setSaving(true)
@@ -52,17 +59,14 @@ export default function PhotoModal({ photo, onClose, onUpdate }: PhotoModalProps
   const handleDelete = async () => {
     setDeleting(true)
     try {
-      // Delete from storage first
       const { error: storageError } = await supabase.storage
         .from('photos')
         .remove([photo.storage_path])
-      
+
       if (storageError) {
         console.error('storage delete error:', storageError)
-        // Don't throw — storage path may already be gone. Still delete the DB row.
       }
 
-      // Delete from DB
       const { error: dbError } = await supabase
         .from('photos')
         .delete()
@@ -71,8 +75,8 @@ export default function PhotoModal({ photo, onClose, onUpdate }: PhotoModalProps
       if (dbError) throw dbError
 
       toast.success('memory deleted 🌻')
-      onUpdate()  // refetch the list
-      onClose()   // close modal AFTER update so parent clears selectedPhoto
+      onUpdate()
+      onClose()
     } catch {
       toast.error('could not delete — try again')
     } finally {
@@ -90,10 +94,8 @@ export default function PhotoModal({ photo, onClose, onUpdate }: PhotoModalProps
         exit={{ opacity: 0 }}
         onClick={onClose}
       >
-        {/* Backdrop */}
         <div className="absolute inset-0 bg-chocolate/60 backdrop-blur-sm" />
 
-        {/* Panel */}
         <motion.div
           className="relative z-10 bg-surface rounded-3xl shadow-polaroid overflow-hidden flex max-w-3xl w-full max-h-[90vh]"
           initial={{ scale: 0.92, opacity: 0, y: 20 }}
@@ -117,7 +119,6 @@ export default function PhotoModal({ photo, onClose, onUpdate }: PhotoModalProps
 
           {/* Details */}
           <div className="flex-1 p-6 flex flex-col overflow-y-auto">
-            {/* Close */}
             <button
               onClick={onClose}
               className="absolute top-4 right-4 w-8 h-8 rounded-full bg-chocolate/10 hover:bg-chocolate/20 flex items-center justify-center text-sm transition"
@@ -128,17 +129,9 @@ export default function PhotoModal({ photo, onClose, onUpdate }: PhotoModalProps
             {/* Header */}
             <div className="mb-4">
               <div className="flex items-center gap-2 mb-1">
-                {(photo as any).profiles?.avatar_url ? (
-                  <img
-                    src={(photo as any).profiles.avatar_url}
-                    alt=""
-                    className="w-6 h-6 rounded-full object-cover"
-                  />
-                ) : (
-                  <span className="text-lg">🌻</span>
-                )}
+                <UploaderAvatar avatarUrl={profiles?.avatar_url} />
                 <span className="font-hand text-orchid">
-                  {(photo as any).profiles?.nickname || (photo as any).profiles?.display_name || 'someone'}
+                  {profiles?.nickname || profiles?.display_name || 'someone'}
                 </span>
               </div>
               {photo.taken_at && (
@@ -198,7 +191,6 @@ export default function PhotoModal({ photo, onClose, onUpdate }: PhotoModalProps
                   </div>
                 )}
 
-                {/* Delete confirm */}
                 {confirmDelete && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
