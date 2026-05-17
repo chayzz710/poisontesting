@@ -41,9 +41,12 @@ export default function RiptidePen({ className = '' }: RiptidePenProps) {
             onClick={() => setPsst(false)}
           />
           <span
-            className="absolute z-50 bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap"
+            className="absolute z-50 top-full right-0 mt-2 whitespace-nowrap"
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Little triangle pointer */}
+            <span className="block w-3 h-3 bg-cream border-l-2 border-t-2 border-orchid/30 rotate-45 ml-auto mr-3 -mb-1.5" />
+            
             {/* Bubble */}
             <span className="flex flex-col items-center gap-2 bg-cream border-2 border-orchid/30 rounded-2xl shadow-polaroid px-4 py-3">
               <span className="font-hand text-sm text-chocolate">
@@ -64,8 +67,6 @@ export default function RiptidePen({ className = '' }: RiptidePenProps) {
                 </button>
               </span>
             </span>
-            {/* Little triangle pointer */}
-            <span className="block w-3 h-3 bg-cream border-r-2 border-b-2 border-orchid/30 rotate-45 mx-auto -mt-1.5" />
           </span>
         </>
       )}

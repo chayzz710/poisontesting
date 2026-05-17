@@ -63,7 +63,14 @@ export function DinoPerPage({ pageKey }: DinoProps) {
   ]
   const pos = POSITIONS[dinoIndex]
 
+  const playRoar = () => {
+  const audio = new Audio('/sounds/roar.mp3')
+  audio.volume = 0.5
+  audio.play()
+  }
+
   const handleClick = () => {
+    playRoar()
     setFound(true)
     setFact(randomDinoFact())
   }
@@ -101,7 +108,7 @@ export function DinoPerPage({ pageKey }: DinoProps) {
             {/* Close button */}
             <button
                 onClick={() => setFound(false)}
-                className="absolute top-2 right-2 w-5 h-5 rounded-full bg-chocolate/10 hover:bg-chocolate/20 flex items-center justify-center text-xs transition"
+                className="absolute top-2 right-2 w-5 h-5 rounded-full bg-sunflower/20 hover:bg-sunflower/40 flex items-center justify-center text-xs transition"
             >
                 ✕
             </button>
