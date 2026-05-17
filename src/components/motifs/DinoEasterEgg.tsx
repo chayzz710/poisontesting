@@ -1,37 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { seededRandom } from '../../lib/utils'
 import { randomDinoFact } from '../../data/dinoFacts'
 
 const PAGES = ['home', 'gallery', 'letters', 'jar', 'puns', 'map', 'playlist', 'bucketlist']
-
-const POSITIONS = [
-  { top: '80px',  left: '16px'  },
-  { top: '80px',  right: '16px' },
-  { bottom: '40px', left: '16px'  },
-  { bottom: '40px', right: '16px' },
-]
-
-export default function DinoEasterEgg() {
-  const [activePage, setActivePage] = useState<string | null>(null)
-  const [found, setFound] = useState(false)
-  const [fact, setFact] = useState<string | null>(null)
-
-  useEffect(() => {
-    // Pick a page once per session and stick with it
-    const stored = sessionStorage.getItem('dino-page')
-    if (stored) {
-      setActivePage(stored)
-    } else {
-      const picked = PAGES[Math.floor(Math.random() * PAGES.length)]
-      sessionStorage.setItem('dino-page', picked)
-      setActivePage(picked)
-    }
-  }, [])
-
-  // pageKey prop tells us which page we're on
-  return null // rendered per-page via PageWrapper — see below
-}
 
 // The actual per-page component used inside PageWrapper
 interface DinoProps {

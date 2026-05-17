@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { seededRandom } from '../../lib/utils'
 
 interface FrogEasterEggProps {
   pageKey: string // unique per page so frog appears in different spots
