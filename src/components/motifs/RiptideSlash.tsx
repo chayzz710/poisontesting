@@ -15,7 +15,7 @@ export default function RiptideSlash() {
         >
           {/* Diagonal slash line */}
           <motion.div
-            className="absolute"
+            className="absolute "
             style={{
               width: '140vw',
               height: '4px',
