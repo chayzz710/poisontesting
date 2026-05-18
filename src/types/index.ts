@@ -23,6 +23,9 @@ export interface Profile {
   love_language: string | null
   fav_things: string[] | null
   created_at: string
+  current_location?: string | null
+  current_location_lat?: number | null
+  current_location_lng?: number | null
 }
 
 export interface Photo {

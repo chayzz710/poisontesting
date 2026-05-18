@@ -7,6 +7,7 @@ import PunOfTheDay from '../components/features/home/PunOfTheDay'
 import KinderJoyTeaser from '../components/features/home/KinderJoyTeaser'
 import MonthlyAnniversaryBanner from '../components/features/home/MonthlyAnniversaryBanner'
 import QuickLinks from '../components/features/home/QuickLinks'
+import DistanceTracker from '../components/features/home/DistanceTracker'
 
 export default function HomePage() {
   return (
@@ -35,6 +36,9 @@ export default function HomePage() {
 
         {/* Profile pair */}
         <ProfilePair />
+
+        {/* Distance tracker */}
+        <DistanceTracker />
 
         <SunflowerDivider />
 

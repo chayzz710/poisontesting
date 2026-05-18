@@ -6,13 +6,10 @@ import type { Profile } from '../../../types'
 
 function Avatar({ profile }: { profile: Profile | null }) {
   const initials = profile?.display_name
-    ? profile.display_name
-        .split(' ')
-        .map((w) => w[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2)
+    ? profile.display_name.split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2)
     : '?'
+
+  const isEmoji = profile?.avatar_url && !profile.avatar_url.startsWith('http')
 
   return (
     <motion.div
@@ -21,17 +18,17 @@ function Avatar({ profile }: { profile: Profile | null }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="relative">
-        {profile?.avatar_url ? (
+      <div className="w-24 h-24 rounded-full border-4 border-sunflower shadow-polaroid bg-sunflower/30 flex items-center justify-center overflow-hidden">
+        {isEmoji ? (
+          <span className="text-4xl">{profile!.avatar_url}</span>
+        ) : profile?.avatar_url ? (
           <img
             src={profile.avatar_url}
             alt={profile.display_name ?? 'User'}
-            className="w-24 h-24 rounded-full object-cover shadow-polaroid border-4 border-sunflower"
+            className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-24 h-24 rounded-full bg-sunflower/30 border-4 border-sunflower shadow-polaroid flex items-center justify-center">
-            <span className="font-display text-2xl text-chocolate">{initials}</span>
-          </div>
+          <span className="font-display text-2xl text-chocolate">{initials}</span>
         )}
       </div>
       <div className="text-center">
@@ -50,16 +47,13 @@ function Avatar({ profile }: { profile: Profile | null }) {
 
 export default function ProfilePair() {
   const [char, setChar] = useState<Profile | null>(null)
-  const [rag, setRag] = useState<Profile | null>(null)
+  const [rag, setRag]   = useState<Profile | null>(null)
 
   useEffect(() => {
     async function load() {
       const ids = [OWNERS.char, OWNERS.rag].filter((id) => id !== 'TBD')
       if (ids.length === 0) return
-      const { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .in('id', ids)
+      const { data } = await supabase.from('profiles').select('*').in('id', ids)
       if (!data) return
       data.forEach((p: Profile) => {
         if (p.id === OWNERS.char) setChar(p)
